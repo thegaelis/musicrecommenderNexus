@@ -9,7 +9,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 const PlayerControl = (props) => {
-    console.log(props.data);
+    // console.log(props.data);
     const [isPlay, setIsPlay] = useState(true);
     const handleTogglePlay = () => {
         setIsPlay(!isPlay);

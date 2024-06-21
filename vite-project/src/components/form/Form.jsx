@@ -1,182 +1,81 @@
-import { useState } from "react";
-import InputItem from "../music/InputItem";
+import { useEffect, useState } from "react";
+import Papa from "papaparse";
+import InputItem from "./../music/InputItem";
 
 const Form = () => {
-    const data = {
-        name: [
-            "Lạc Trôi",
-            "Em Gái Mưa",
-            "Có Chắc Yêu Là Đây",
-            "Nơi Này Có Anh",
-            "Chạy Ngay Đi",
-            "Cơn Mưa Ngang Qua",
-            "Hãy Trao Cho Anh",
-            "Thái Bình Mồ Hôi Rơi",
-            "Chúng Ta Không Thuộc Về Nhau",
-            "Anh Cứ Đi Đi",
-            "Người Lạ Ơi",
-            "Ánh Nắng Của Anh",
-            "Bống Bống Bang Bang",
-            "Phía Sau Một Cô Gái",
-            "Đâu Chỉ Riêng Em",
-            "Yêu 5",
-            "Một Nhà",
-            "Lemon Tree",
-            "Shape of You",
-            "Despacito",
-            "See You Again",
-            "Closer",
-            "Let Me Love You",
-            "Havana",
-            "Something Just Like This",
-            "Faded",
-            "Rockabye",
-            "Perfect",
-            "Cheap Thrills",
-            "Stay",
-            "Stitches",
-            "Love Yourself",
-            "Sorry",
-            "Blank Space",
-            "Thinking Out Loud",
-            "Photograph",
-            "Sugar",
-            "Uptown Funk",
-            "Happy",
-            "Royals",
-            "Radioactive",
-            "Demons",
-            "Counting Stars",
-            "All of Me",
-            "Dark Horse",
-            "Roar",
-            "Wrecking Ball",
-            "We Can't Stop",
-            "Applause",
-            "Do What U Want",
-            "Venus",
-        ],
-        artist: [
-            "Sơn Tùng M-TP",
-            "Hương Tràm",
-            "Mỹ Tâm",
-            "Noo Phước Thịnh",
-            "Bích Phương",
-            "Đức Phúc",
-            "Min",
-            "JustaTee",
-            "Phương Ly",
-            "Isaac",
-            "Hari Won",
-            "Hồ Ngọc Hà",
-            "Khởi My",
-            "Chi Pu",
-            "ERIK",
-            "Suni Hạ Linh",
-            "Đông Nhi",
-            "Hoàng Thùy Linh",
-            "Vũ Cát Tường",
-            "Tiên Tiên",
-            "Trúc Nhân",
-            "Soobin Hoàng Sơn",
-            "Ngô Kiến Huy",
-            "Trịnh Thăng Bình",
-            "Trung Quân Idol",
-            "Bùi Anh Tuấn",
-            "Ali Hoàng Dương",
-            "Tóc Tiên",
-            "Hoàng Dũng",
-            "Quang Hùng MasterD",
-            "AMEE",
-            "B Ray",
-            "K-ICM",
-            "Jack",
-            "Mr. Siro",
-            "OnlyC",
-            "Karik",
-            "Binz",
-            "Đen",
-            "Rhymastic",
-            "Sơn Tùng M-TP",
-            "Taylor Swift",
-            "Ed Sheeran",
-            "Justin Bieber",
-            "Shawn Mendes",
-            "Charlie Puth",
-            "Camila Cabello",
-            "Selena Gomez",
-            "Ariana Grande",
-            "Billie Eilish",
-            "The Weeknd",
-        ],
-        genre: [
-            "Pop",
-            "Ballad",
-            "Rock",
-            "Hip-hop",
-            "R&B",
-            "Electronic",
-            "Dance",
-            "Country",
-            "Jazz",
-            "Classical",
-            "Blues",
-            "Reggae",
-            "Latin",
-            "Metal",
-            "Folk",
-            "Soul",
-            "Funk",
-            "Disco",
-            "Indie",
-            "Punk",
-            "Ska",
-            "Gospel",
-            "Opera",
-            "K-pop",
-            "J-pop",
-            "C-pop",
-            "Alternative",
-            "Ambient",
-            "Dubstep",
-            "Techno",
-            "House",
-            "Trance",
-            "Drum & Bass",
-            "Garage",
-            "Grime",
-            "Trap",
-            "Emo",
-            "Synth-pop",
-            "New Wave",
-            "Post-punk",
-            "Shoegaze",
-            "Dream Pop",
-        ],
+    const [data, setData] = useState({ artists: [], trackName: [] });
+
+    const handleFileUpload = async () => {
+        try {
+            const filePath = "/dataset.csv"; // Ensure this path is correct
+            const response = await fetch(filePath);
+            const csvText = await response.text();
+            Papa.parse(csvText, {
+                header: true,
+                complete: (results) => {
+                    const artists = results.data
+                        .map((row) => row.artists)
+                        .flat();
+                    const trackName = results.data
+                        .map((row) => row.track_name)
+                        .flat();
+
+                    setData({ artists, trackName });
+                    // console.log("1"); //! chỗ này check
+                    // console.log({ artists });
+                },
+            });
+        } catch (error) {
+            console.error("Error loading CSV file:", error);
+        }
     };
 
-    const [input, setInput] = useState({
-        name: "",
-        artist: "",
-        genre: "",
-    });
-    const [selectedInput, setSelectedInput] = useState({
-        name: [],
-        artist: [],
-        genre: [],
-    });
+    useEffect(() => {
+        handleFileUpload();
+    }, []);
+
     const [filteredInput, setFilteredInput] = useState(data);
+
+    useEffect(() => {
+        if (data.artists.length > 0 && data.trackName.length > 0) {
+            setFilteredInput(data); //! Chổ này là set source để load, set thì UI lag
+            // console.log(filteredInput);
+            console.log("Fetched ok");
+        }
+    }, [data]);
+
+    const [input, setInput] = useState({
+        trackName: "",
+        artists: "",
+        link: "",
+    });
+
+    const [selectedInput, setSelectedInput] = useState({
+        trackName: [],
+        artists: [],
+    });
 
     const handleInputChange = (e, type) => {
         const value = e.target.value;
 
+        // If trackName or artists is selected, prevent input for link
+        if (
+            (selectedInput.trackName.length > 0 ||
+                selectedInput.artists.length > 0) &&
+            type === "link"
+        ) {
+            return;
+        }
+
         // Update the specific field in the input state
         setInput({ ...input, [type]: value });
+        if (type === "link") return;
 
         // Filter the data based on the input value
         const filtered = value
-            ? data[type].filter((item) =>
-                  item.toLowerCase().includes(value.toLowerCase())
+            ? data[type].filter(
+                  (item) =>
+                      item && item.toLowerCase().includes(value.toLowerCase())
               )
             : data[type];
 
@@ -187,10 +86,31 @@ const Form = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Submit");
-        console.log(selectedInput);
+
+        // Get the value to be submitted
+        let submissionValue = null;
+
+        if (input.link) {
+            submissionValue = { link: input.link };
+        } else if (selectedInput.trackName.length > 0) {
+            submissionValue = { trackName: selectedInput.trackName };
+        } else if (selectedInput.artists.length > 0) {
+            submissionValue = { artists: selectedInput.artists };
+        }
+
+        console.log(submissionValue);
     };
 
     const handleItemSelect = (item, type) => {
+        // If either trackName or artists is selected, prevent selection of the other
+        if (input.link) return;
+        if (type === "trackName" && selectedInput.artists.length > 0) {
+            return;
+        }
+        if (type === "artists" && selectedInput.trackName.length > 0) {
+            return;
+        }
+
         const alreadySelected = selectedInput[type].includes(item);
 
         setSelectedInput({
@@ -202,91 +122,111 @@ const Form = () => {
     };
 
     return (
-        <div className=" max-h-[calc(100vh-90px)] w-[40%] p-[20px] border-r border-gray-300 shadow-lg overflow-auto">
+        <div className="max-h-[calc(100vh-90px)] w-[30%] p-[20px] border-r border-gray-300 shadow-lg overflow-auto">
             <form
-                className="flex flex-col  justify-start space-y-4 pt-[10px]"
+                className="flex flex-col justify-start space-y-4 pt-[10px]"
                 onSubmit={handleSubmit}
             >
                 {/* //*Input 1 */}
+                {/* <span className="font-normal" key={index}>
+                                {item + ", "}
+                            </span> */}
                 <div className="flex flex-col flex-1">
                     <label
-                        htmlFor="name"
+                        htmlFor="trackName"
                         className="block text-base font-semibold text-gray-700 h-[50px] max-h-[50px] overflow-auto"
                     >
-                        Name of song:
-                        {selectedInput.name?.map((item, index) => (
-                            <span className="font-normal" key={index}>
-                                {item + ", "}
-                            </span>
+                        Track name:
+                        {selectedInput.trackName?.map((item, index) => (
+                            <InputItem
+                                data={item}
+                                type="trackName"
+                                onClick={handleItemSelect}
+                                key={index}
+                                tag="span"
+                            ></InputItem>
                         ))}
                     </label>
                     <input
                         autoComplete="off"
                         type="text"
-                        id="name"
-                        value={input.name}
+                        id="trackName"
+                        value={input.trackName}
                         onChange={(e) => {
-                            handleInputChange(e, "name");
+                            handleInputChange(e, "trackName");
                         }}
                         className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                        placeholder="Enter name here"
+                        placeholder="Enter track name here"
                     />
                     <div className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm h-[110px] max-h-[110px] overflow-auto">
-                        {filteredInput.name.map((item, index) => (
-                            <InputItem
-                                data={item}
-                                type="name"
-                                onClick={handleItemSelect}
-                                key={index}
-                            ></InputItem>
-                        ))}
+                        {filteredInput.trackName
+                            ?.slice(0, 20)
+                            .map((item, index) => (
+                                <InputItem
+                                    data={item}
+                                    type="trackName"
+                                    onClick={handleItemSelect}
+                                    key={index}
+                                    tag="div"
+                                ></InputItem>
+                            ))}
                     </div>
                 </div>
 
                 {/* //*Input 2 */}
+                {/* <span className="font-normal" key={index}>
+                                {item + ", "}
+                            </span> */}
                 <div className="flex flex-col flex-1">
                     <label
-                        htmlFor="artist"
+                        htmlFor="artists"
                         className="block text-base font-semibold text-gray-700 h-[50px] max-h-[50px] overflow-auto"
                     >
                         Artists:
-                        {selectedInput.artist?.map((item, index) => (
-                            <span className="font-normal" key={index}>
-                                {item + ", "}
-                            </span>
+                        {selectedInput.artists?.map((item, index) => (
+                            <InputItem
+                                data={item}
+                                type="artists"
+                                onClick={handleItemSelect}
+                                key={index}
+                                tag="span"
+                            ></InputItem>
                         ))}
                     </label>
                     <input
                         autoComplete="off"
                         type="text"
-                        id="artist"
-                        value={input.artist}
+                        id="artists"
+                        value={input.artists}
                         onChange={(e) => {
-                            handleInputChange(e, "artist");
+                            handleInputChange(e, "artists");
                         }}
                         className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                        placeholder="Enter artist here"
+                        placeholder="Enter artists here"
                     />
                     <div className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm h-[110px] max-h-[110px] overflow-auto">
-                        {filteredInput.artist.map((item, index) => (
-                            <InputItem
-                                data={item}
-                                type="artist"
-                                onClick={handleItemSelect}
-                                key={index}
-                            ></InputItem>
-                        ))}
+                        {filteredInput.artists
+                            ?.slice(0, 20)
+                            .map((item, index) => (
+                                <InputItem
+                                    data={item}
+                                    type="artists"
+                                    onClick={handleItemSelect}
+                                    key={index}
+                                    tag="div"
+                                ></InputItem>
+                            ))}
                     </div>
                 </div>
 
                 {/* //*Input 3 */}
                 <div className="flex flex-col flex-1">
                     <label
-                        htmlFor="genre"
+                        htmlFor="link"
                         className="block text-base font-semibold text-gray-700 h-[50px] max-h-[50px] overflow-auto"
                     >
-                        Genres:
-                        {selectedInput.genre?.map((item, index) => (
+                        Link:
+                        {selectedInput.link?.map((item, index) => (
                             <span className="font-normal" key={index}>
                                 {item + ", "}
                             </span>
@@ -295,24 +235,24 @@ const Form = () => {
                     <input
                         autoComplete="off"
                         type="text"
-                        id="genre"
-                        value={input.genre}
+                        id="link"
+                        value={input.link}
                         onChange={(e) => {
-                            handleInputChange(e, "genre");
+                            handleInputChange(e, "link");
                         }}
                         className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                        placeholder="Enter genre here"
+                        placeholder="Enter link here"
                     />
-                    <div className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm h-[110px] max-h-[110px] overflow-auto">
-                        {filteredInput.genre.map((item, index) => (
-                            <InputItem
-                                data={item}
-                                type="genre"
-                                onClick={handleItemSelect}
+                    {/* <div className="mt-2 p-2 border border-gray-300 rounded-md shadow-sm h-[110px] max-h-[110px] overflow-auto">
+                        {filteredInput.link?.map((item, index) => (
+                            <div
                                 key={index}
-                            ></InputItem>
+                                onClick={() => handleItemSelect(item, "link")}
+                            >
+                                {item}
+                            </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* //* Submit Button */}

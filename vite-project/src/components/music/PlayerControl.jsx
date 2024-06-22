@@ -27,30 +27,29 @@ const PlayerControl = (props) => {
         <div className="fixed w-screen h-[90px] bg-[#f9c6c5] px-[20px] py-[10px] bottom-0 flex ">
             {/* //*Block info */}
             <div className="flex gap-[10px] w-[50%] h-[100%]">
-                <div className="w-[70px] h-[70px] overflow-hidden cursor-default">
-                    {/* //* Image */}
+                {/* <div className="w-[70px] h-[70px] overflow-hidden cursor-default">
                     <img
                         className="w-full object-cover "
                         src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/f/9/3/9/f9390ab7a26adbe59739fe2ba9470ee1.jpg"
                         alt="Avatar"
                     />
-                </div>
+                </div> */}
 
                 <div className="flex flex-col justify-center ">
                     {/* //* Name */}
-                    <p className="text-primary font-semibold  transition-all cursor-default">
+                    {/* <p className="text-primary font-semibold  transition-all cursor-default">
                         Ngày Mai Người Ta Lấy Chồng
-                    </p>
+                    </p> */}
 
                     {/* //* Artists */}
-                    <p className="cursor-default">Thành Đạt</p>
+                    {/* <p className="cursor-default">Thành Đạt</p> */}
                 </div>
             </div>
 
             {/* //* Controller */}
             {/* npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core
              */}
-            <div className="flex gap-5 text-primary text-3xl items-center">
+            {/* <div className="flex gap-5 text-primary text-3xl items-center">
                 <FontAwesomeIcon
                     icon={faBackwardStep}
                     className="cursor-pointer"
@@ -76,7 +75,7 @@ const PlayerControl = (props) => {
                     className="cursor-pointer"
                     onClick={handleNext}
                 />
-            </div>
+            </div> */}
         </div>
     );
 };

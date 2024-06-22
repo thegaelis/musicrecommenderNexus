@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 const InputItem = (props) => {
     return (
         <props.tag
-            className="text-gray-700 cursor-pointer hover:text-hover font-normal"
+            className="text-gray-700 cursor-pointer font-normal transition-all duration-100 ease-in-out hover:text-hover "
             onClick={() => {
                 props.onClick(props.data, props.type);
             }}

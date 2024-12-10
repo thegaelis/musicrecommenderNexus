@@ -67,9 +67,82 @@ function App() {
         ]);
     }, []);
 
+    const endpoint1 = async (joinedValues) => {
+        // Tạo URL với các giá trị đã nối
+        const url = `http://127.0.0.1:8000/endpoint1/${joinedValues}`;
+        console.log(url);
+
+        try {
+            // Fetch với method GET
+            const response = await fetch(url, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            setResponse1(data);
+            console.log(data);
+        } catch (error) {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+        }
+    };
+
+    const endpoint2 = async (id) => {
+        // Tạo URL với các giá trị đã nối
+        const url = `http://127.0.0.1:8000/endpoint2/${id}`;
+        console.log(url);
+
+        try {
+            // Fetch với method GET
+            const response = await fetch(url, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            setResponse2(data);
+            console.log(data);
+        } catch (error) {
+            console.error(
+                "There has been a problem with your fetch operation:",
+                error
+            );
+        }
+    };
+
     const handleSubmit = (e, submissionValue, type) => {
         e.preventDefault();
         console.log("Submit");
+        console.log(submissionValue);
+
+        if (type == "link") {
+            console.log("link");
+            endpoint2(submissionValue.link);
+        } else if (type == "trackName") {
+            console.log("trackName");
+
+            // Kiểm tra nếu submissionValue.trackIds là một mảng
+            const valuesArray = Array.isArray(submissionValue.trackIds)
+                ? submissionValue.trackIds
+                : [submissionValue.trackIds];
+
+            // Join các giá trị trong mảng submissionValue.trackIds bằng dấu phẩy
+            const joinedValues = valuesArray.join(",");
+
+            console.log("join");
+            console.log(joinedValues);
+
+            endpoint1(joinedValues);
+        }
 
         console.log("Type: " + type);
         console.log(submissionValue);
